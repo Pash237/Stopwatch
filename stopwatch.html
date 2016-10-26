@@ -1,0 +1,159 @@
+<html>
+	<head>
+		<title>Stopwatch</title>
+		<style type="text/css">
+			#container {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+			}
+			#timer {
+				font-family: monospace;
+				font-size: 13vmin;
+				font-style: normal;
+				font-variant: normal;
+				font-weight: 200;
+
+				position: absolute;
+			    top: 40%;
+			    left: 49.5%;
+			    transform: translateX(-50%) translateY(-50%);
+			}
+
+			#buttons-container {
+				position: absolute;
+				top: 70%;
+				left: 50%;
+				transform: translateX(-50%) translateY(-50%);
+			}
+
+			.timer-button {
+				font-family: monospace;
+				font-size: 3vmin;
+				color: #c00000;
+				cursor: pointer;
+				padding: 4vmin;
+				-webkit-user-select: none;
+				-moz-user-select: none;
+    			-ms-user-select: none;
+			}
+
+			.timer-button:active {
+ 			   color: #600000;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div id="timer">00:00,000</div>
+			<div id="buttons-container">
+				<a class="timer-button" id="toggle-button" onclick="toggle()">Start</a>
+				<a class="timer-button" id="reset-button" onclick="reset()">Reset</a>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			var timer = document.getElementById("timer");
+			var updateLoop = null;
+			var timerState = localStorage["timerState"];		//idle, running, stopped
+			if (!timerState) {
+				timerState = "idle";
+			}
+			var timePassed = parseInt(localStorage["timePassed"]);
+			var startTime = parseInt(localStorage["startTime"]);
+
+			if (timerState == "running") {
+				resume();
+			}
+
+			if (startTime) {
+				updateTimer();
+			}
+
+			function toggle()
+			{
+				if (timerState == "running" ) {
+					stop();
+				} else {
+					start();
+				}
+			}
+
+			function resume()
+			{
+				updateTimer();
+				clearInterval(updateLoop);
+				updateLoop = setInterval(updateTimer, 16.66667);
+
+				timerState = "running"
+				localStorage.setItem("timerState", timerState);
+				document.getElementById("toggle-button").innerHTML = "Stop&nbsp;";
+			}
+
+			function start()
+			{
+				startTime = new Date().getTime();
+				localStorage.setItem("startTime", startTime);			
+
+				resume();
+			}
+
+			function stop()
+			{
+				clearInterval(updateLoop);
+
+				if (startTime) {
+					timePassed = new Date().getTime() - startTime + timePassed;
+					startTime = new Date().getTime();
+				} else {
+					timePassed = 0;
+				}
+				updateTimer();
+
+				localStorage.setItem("timePassed", timePassed);
+
+				timerState = "stopped"
+				localStorage.setItem("timerState", timerState);
+
+				document.getElementById("toggle-button").innerHTML = "Start";
+			}
+
+			function reset()
+			{
+				stop()
+				timer.innerHTML = "00:00,000";
+				startTime = 0;
+				localStorage.removeItem("startTime");
+				timerState = "idle"
+				localStorage.setItem("timerState", timerState);
+				timePassed = 0;
+				localStorage.setItem("timePassed", timePassed);
+			}
+
+			function pad(num, size) {
+				return ('000000000' + num).substr(-size);
+			}
+
+			function updateTimer()
+			{
+				var timeSinceStart = 0;
+				if (timerState == "stopped") {
+					timeSinceStart = timePassed;
+				} else {
+					timeSinceStart = new Date().getTime() - startTime + timePassed;
+				}
+
+				var milliseconds = Math.floor(timeSinceStart) % 1000;
+				var seconds = Math.floor(timeSinceStart/1000) % 60;
+				var minutes = Math.floor(timeSinceStart/1000/60) % 60;
+				var hours = Math.floor(timeSinceStart/1000/60/60);
+
+				if (hours > 0) {
+					timer.innerHTML = "" + hours + "." + pad(minutes, 2) + ":" + pad(seconds, 2) + "," + pad(milliseconds, 3);
+				} else {
+					timer.innerHTML = "" + pad(minutes, 2) + ":" + pad(seconds, 2) + "," + pad(milliseconds, 3);
+				}
+			}
+		</script>
+	</body>
+</html>

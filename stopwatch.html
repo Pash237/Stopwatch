@@ -59,8 +59,8 @@
 			if (!timerState) {
 				timerState = "idle";
 			}
-			var timePassed = parseInt(localStorage["timePassed"]);
-			var startTime = parseInt(localStorage["startTime"]);
+			var timePassed = parseInt(localStorage["timePassed"]) || 0;
+			var startTime = parseInt(localStorage["startTime"]) || 0;
 
 			if (timerState == "running") {
 				resume();

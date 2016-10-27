@@ -154,6 +154,20 @@
 					timer.innerHTML = "" + pad(minutes, 2) + ":" + pad(seconds, 2) + "," + pad(milliseconds, 3);
 				}
 			}
+
+			document.addEventListener('keyup', onKeyUp, false);
+
+			function onKeyUp(event)
+			{
+				var event = event || window.event;
+				
+				if (event.code == "KeyS" || event.code == "Space" || event.which == 83 || event.which == 32) {
+					toggle();
+				}
+				if (event.code == "KeyR" || event.which == 82) {
+					reset();
+				}
+			}
 		</script>
 	</body>
 </html>

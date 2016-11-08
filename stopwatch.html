@@ -162,7 +162,7 @@
 				var hours = Math.floor(timeSinceStart/1000/60/60);
 
 				if (hours > 0) {
-					timer.innerHTML = "" + hours + "." + pad(minutes, 2) + ":" + pad(seconds, 2) + "," + pad(milliseconds, 3);
+					timer.innerHTML = "" + hours + ":" + pad(minutes, 2) + ":" + pad(seconds, 2);
 				} else {
 					timer.innerHTML = "" + pad(minutes, 2) + ":" + pad(seconds, 2) + "," + pad(milliseconds, 3);
 				}
